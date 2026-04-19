@@ -8,14 +8,30 @@ namespace Roll;
 
 public class RollModSystem : ModSystem
 {
-    private const int MaxRollCount = 10;
-    private const int MaxDiceSides = 100;
+    public static RollModConfig ModConfig;
     
     public static readonly Random Random = new Random();
     
     private ICoreServerAPI _sapi;
     
     public override bool ShouldLoad(EnumAppSide forSide) => forSide == EnumAppSide.Server;
+    
+    public override void StartPre(ICoreAPI api)
+    {
+        try
+        {
+            ModConfig = api.LoadModConfig<RollModConfig>($"{nameof(RollModConfig)}.json");
+            if (ModConfig == null)
+            {
+                ModConfig = new RollModConfig();
+                api.StoreModConfig(ModConfig, $"{nameof(RollModConfig)}.json");
+            }
+        }
+        catch
+        {
+            ModConfig = new RollModConfig();
+        }
+    }
     
     public override void StartServerSide(ICoreServerAPI api)
     {
@@ -75,8 +91,8 @@ public class RollModSystem : ModSystem
         {
             if (int.TryParse(args[0].ToString(), out int result))
             {
-                if (result <= 1 || result > MaxDiceSides)
-                    throw new Exception($"Invalid argument. Value can be 2-{MaxDiceSides}");
+                if (result <= 1 || result > ModConfig.MaxDiceSides)
+                    throw new Exception($"Invalid argument. Value can be 2-{ModConfig.MaxDiceSides}");
                 
                 return new MinMaxRandomizer(max: result);
             }
@@ -91,10 +107,10 @@ public class RollModSystem : ModSystem
             
             int sides = int.Parse(match.Groups[2].Value);
 
-            if (count > MaxRollCount || count < 1)
-                throw new Exception($"Invalid argument. Value can be 1-{MaxRollCount}");
-            if (sides > MaxDiceSides || sides <= 1)
-                throw new Exception($"Invalid argument. Value can be 1-{MaxDiceSides}");
+            if (count > ModConfig.MaxRollCount || count < 1)
+                throw new Exception($"Invalid argument. Value can be 1-{ModConfig.MaxRollCount}");
+            if (sides > ModConfig.MaxDiceSides || sides <= 1)
+                throw new Exception($"Invalid argument. Value can be 1-{ModConfig.MaxDiceSides}");
             
             return new DiceRandomizer(sides, count);
         }
@@ -108,7 +124,7 @@ public class RollModSystem : ModSystem
                 throw new Exception($"Invalid argument. Min value must be greater than max value");
             
             if (min < 1 || max < 1)
-                throw new Exception($"Invalid argument. Value can be 1-{MaxDiceSides}");
+                throw new Exception($"Invalid argument. Value can be 1-{ModConfig.MaxDiceSides}");
             
             return new MinMaxRandomizer(min, max);
         }
