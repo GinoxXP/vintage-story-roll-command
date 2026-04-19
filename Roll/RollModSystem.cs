@@ -73,7 +73,7 @@ public class RollModSystem : ModSystem
         var formattedMessage =
             $"<font color=#ffaa00><strong>{player.PlayerName} rolls ({randomizer.Name}): {randomizer.GetRandomValue()}</strong></font>";
         
-        _sapi.SendMessageToGroup(args.Caller.FromChatGroupId, formattedMessage, EnumChatType.AllGroups);
+        _sapi.SendMessageToGroup(args.Caller.FromChatGroupId, formattedMessage, EnumChatType.Notification);
         
         return TextCommandResult.Success();
     }
