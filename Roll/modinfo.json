@@ -1,0 +1,14 @@
+{
+  "type": "Code",
+  "modid": "roll-command",
+  "name": "Roll Command",
+  "side": "Server",
+  "authors": [
+    "Ginox"
+  ],
+  "description": "Random command",
+  "version": "1.0.0",
+  "dependencies": {
+    "game": "1.21.0"
+  }
+}
