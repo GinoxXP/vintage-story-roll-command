@@ -2,17 +2,31 @@
 
 public class DiceRandomizer : IRandomizer
 {
+    private readonly int _count;
     public int Min { get; } = 1;
     public int Max { get; }
     public string Name { get; }
-
-    public DiceRandomizer(int max)
+    public DiceRandomizer(int sides, int count = 1)
     {
-        Max = max;
-        Name = $"D{max}";
+        Max = sides;
+        Name = count == 1
+            ? $"D{Max}"
+            : $"{count}D{Max}";
+        
+        _count = count;
     }
     
     public string GetRandomValue()
+    {
+        var results = new string[_count];
+        
+        for (int i = 0; i < _count; i++)
+            results[i] = Roll();
+        
+        return string.Join(", ", results);
+    }
+
+    private string Roll()
     {
         var value = RollModSystem.Random.Next(Min, Max + 1);
         

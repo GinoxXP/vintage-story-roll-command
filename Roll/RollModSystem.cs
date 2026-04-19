@@ -1,12 +1,16 @@
 ﻿using System.Text.RegularExpressions;
 using Roll.Randomizer;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 
 namespace Roll;
 
 public class RollModSystem : ModSystem
 {
+    private const int MaxRollCount = 10;
+    private const int MaxDiceSides = 100;
+    
     public static readonly Random Random = new Random();
     
     private ICoreServerAPI _sapi;
@@ -36,6 +40,9 @@ public class RollModSystem : ModSystem
         if (player == null)
             return TextCommandResult.Error("Player is null");
 
+        if (args.Caller.FromChatGroupId == GlobalConstants.GeneralChatGroup)
+            return TextCommandResult.Error("You cannot use /roll into global chat. Only groups");
+        
         IRandomizer randomizer;
         try
         {
@@ -67,22 +74,42 @@ public class RollModSystem : ModSystem
         {
             if (int.TryParse(args[0].ToString(), out int result))
             {
+                if (result <= 1 || result > MaxDiceSides)
+                    throw new Exception($"Invalid argument. Value can be 2-{MaxDiceSides}");
+                
                 return new MinMaxRandomizer(max: result);
-
             }
 
             var arg = args[0].ToString().ToLower();
-            var match = Regex.Match(arg, @"^d(\d+)$");
+            var match = Regex.Match(arg, @"^(\d+)?d(\d+)$");
             if (!match.Success)
                 throw new Exception("Invalid argument");
             
-            var maxFromDice = int.Parse(match.Groups[1].Value);
-            return new DiceRandomizer(maxFromDice);
+            string countStr = match.Groups[1].Value;
+            int count = string.IsNullOrEmpty(countStr) ? 1 : int.Parse(countStr);
+            
+            int sides = int.Parse(match.Groups[2].Value);
+
+            if (count > MaxRollCount || count < 1)
+                throw new Exception($"Invalid argument. Value can be 1-{MaxRollCount}");
+            if (sides > MaxDiceSides || sides <= 1)
+                throw new Exception($"Invalid argument. Value can be 1-{MaxDiceSides}");
+            
+            return new DiceRandomizer(sides, count);
         }
 
         if (arguments == 2)
         {
-            return new MinMaxRandomizer((int)args[0], (int)args[1]);
+            var min = int.Parse(args[0].ToString());
+            var max = int.Parse(args[1].ToString());
+            
+            if (min >= max)
+                throw new Exception($"Invalid argument. Min value must be greater than max value");
+            
+            if (min < 1 || max < 1)
+                throw new Exception($"Invalid argument. Value can be 1-{MaxDiceSides}");
+            
+            return new MinMaxRandomizer(min, max);
         }
         
         if (arguments == 3)
