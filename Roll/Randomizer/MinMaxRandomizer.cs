@@ -2,8 +2,6 @@
 
 public class MinMaxRandomizer : IRandomizer
 {
-    private Random _rand = new Random();
-    
     public int Min { get; }
     public int Max { get; }
     public string Name { get; }
@@ -18,7 +16,7 @@ public class MinMaxRandomizer : IRandomizer
 
     public string GetRandomValue()
     {
-        var value = _rand.Next(Min, Max + 1);
+        var value = RollModSystem.Random.Next(Min, Max + 1);
         return value.ToString();
     }
 }
