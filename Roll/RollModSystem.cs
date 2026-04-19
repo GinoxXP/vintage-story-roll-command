@@ -28,7 +28,8 @@ public class RollModSystem : ModSystem
                 "/roll [MAX] - returns (1-MAX)\n" +
                 "/roll [MIN] [MAX] - returns (MIN-MAX)\n" +
                 "Dices: d4, d6, d8, d10, d12, d20\n" +
-                "/roll d4 - returns (1-4)")
+                "/roll d4 - returns (1-4)\n" +
+                "/roll 2d4 - returns (1-4), (1-4)")
             .RequiresPrivilege(Privilege.chat)
             .WithArgs( parsers.OptionalWord("string"), parsers.OptionalInt("int1"), parsers.OptionalInt("int2"))
             .HandleWith(OnCommandDice);
