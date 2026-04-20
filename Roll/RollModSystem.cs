@@ -57,7 +57,8 @@ public class RollModSystem : ModSystem
         if (player == null)
             return TextCommandResult.Error("Player is null");
 
-        if (args.Caller.FromChatGroupId == GlobalConstants.GeneralChatGroup)
+        if (ModConfig.ProtectMainChanel &&
+            args.Caller.FromChatGroupId == GlobalConstants.GeneralChatGroup)
             return TextCommandResult.Error("You cannot use /roll into global chat. Only groups");
         
         IRandomizer randomizer;
@@ -71,7 +72,7 @@ public class RollModSystem : ModSystem
         }
 
         var formattedMessage =
-            $"<font color=#ffaa00><strong>{player.PlayerName} rolls ({randomizer.Name}): {randomizer.GetRandomValue()}</strong></font>";
+            $"<font color={ModConfig.MessageColor}><strong>{player.PlayerName} rolls ({randomizer.Name}): {randomizer.GetRandomValue()}</strong></font>";
         
         _sapi.SendMessageToGroup(args.Caller.FromChatGroupId, formattedMessage, EnumChatType.Notification);
         

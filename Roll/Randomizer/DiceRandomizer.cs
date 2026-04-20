@@ -31,10 +31,10 @@ public class DiceRandomizer : IRandomizer
         var value = RollModSystem.Random.Next(Min, Max + 1);
         
         if (value == Min)
-            return $"<font color=#ff4400>{value}</font>";
+            return $"<font color={RollModSystem.ModConfig.CriticalFailColor}>{value}</font>";
         
         if (value == Max)
-            return $"<font color=#55ff55>{value}</font>";
+            return $"<font color={RollModSystem.ModConfig.CriticalSuccessColor}>{value}</font>";
         
         return value.ToString();
     }
