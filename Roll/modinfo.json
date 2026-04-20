@@ -1,6 +1,6 @@
 {
   "type": "Code",
-  "modid": "roll-command",
+  "modid": "roll",
   "name": "Roll Command",
   "side": "Server",
   "authors": [
